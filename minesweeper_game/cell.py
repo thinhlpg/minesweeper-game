@@ -1,13 +1,18 @@
+import tkinter as tk
+from tkinter import Button
+
 import settings
 import random
-from tkinter import Button
 
 
 class Cell:
 
     all = []
+    cell_count = settings.CELL_COUNT
+    cell_count_label_object = None
     def __init__(self, x, y, is_mine=False):
         self.is_mine = is_mine
+        self.is_opened = False
         self.cell_btn_object = None
         self.x = x
         self.y = y
@@ -57,7 +62,16 @@ class Cell:
         return counter
 
     def show_cell(self):
-        self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
+        if not self.is_opened:
+            Cell.cell_count -= 1
+            self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
+            # Replaace the text of cell count label with the newer count
+            if Cell.cell_count_label_object:
+                Cell.cell_count_label_object.configure(
+                    text=f'Cells Left: {Cell.cell_count}'
+                )
+            #Mark the cell as opened (Use is as the last line of this method)
+            self.is_opened = True
 
     def show_mine(self):
         # A logic to interrupt the game and display a message that player lost!
@@ -67,11 +81,25 @@ class Cell:
         if self.is_mine:
             self.show_mine()
         else:
+            if self.surrounded_cells_mines_length == 0:
+                for cell_obj in self.surrounded_cells:
+                    cell_obj.show_cell()
             self.show_cell()
 
     def right_click_action(self, event):
         print(event)
         print('I am right clicked!')
+
+    @staticmethod
+    def create_cell_count_label(location):
+        lbl = tk.Label(
+            location,
+            bg='black',
+            fg='white',
+            text=f'Cells Left: {Cell.cell_count}',
+            font=('', 30)
+        )
+        Cell.cell_count_label_object = lbl
 
     @staticmethod
     def randomize_mines():

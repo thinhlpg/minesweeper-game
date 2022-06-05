@@ -2,7 +2,7 @@ import tkinter as tk
 
 import settings
 import utils
-from cell import  Cell
+from cell import Cell
 
 
 def main():
@@ -45,15 +45,15 @@ def main():
     # Add the tile of mines to the center_frame
     for x in range(settings.GRID_SIZE):
         for y in range(settings.GRID_SIZE):
-            c = Cell()
+            c = Cell(x, y)
             c.create_btn_object(center_frame)
             c.cell_btn_object.grid(
-                column=x,
-                row=y
+                column=x, row=y
             )
 
+    Cell.randomize_mines()
 
-    # Run the main loop
+    # Run the main looo
     root.mainloop()
 
 

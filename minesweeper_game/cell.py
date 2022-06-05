@@ -1,23 +1,27 @@
+import random
+import ctypes
+import sys
+
 import tkinter as tk
-from tkinter import Button
+from tkinter import Button, Label
 
 import settings
-import random
 
 
 class Cell:
-
     all = []
     cell_count = settings.CELL_COUNT
     cell_count_label_object = None
+
     def __init__(self, x, y, is_mine=False):
         self.is_mine = is_mine
         self.is_opened = False
+        self.is_mine_candidate = False
         self.cell_btn_object = None
         self.x = x
         self.y = y
 
-        #Append the object to the Cell.all list
+        # Append the object to the Cell.all list
         Cell.all.append(self)
 
     def create_btn_object(self, location):
@@ -65,17 +69,25 @@ class Cell:
         if not self.is_opened:
             Cell.cell_count -= 1
             self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
-            # Replaace the text of cell count label with the newer count
+            # Replace the text of cell count label with the newer count
             if Cell.cell_count_label_object:
                 Cell.cell_count_label_object.configure(
                     text=f'Cells Left: {Cell.cell_count}'
                 )
-            #Mark the cell as opened (Use is as the last line of this method)
-            self.is_opened = True
+            # It this was a mine candidate, then for safety, we should
+            # configure the background color to SystemButtoFace
+            self.cell_btn_object.configure(
+                bg='SystemButtonFace'
+            )
+
+        # Mark the cell as opened (Use is as the last line of this method)
+        self.is_opened = True
 
     def show_mine(self):
         # A logic to interrupt the game and display a message that player lost!
         self.cell_btn_object.configure(bg='red')
+        ctypes.windll.user32.MessageBoxW(0, 'You clicked on a mine', 'Game Over!', 0)
+        sys.exit()
 
     def left_click_action(self, event):
         if self.is_mine:
@@ -85,10 +97,21 @@ class Cell:
                 for cell_obj in self.surrounded_cells:
                     cell_obj.show_cell()
             self.show_cell()
+            # If Mines cocunt is equal to the cells left count, player won
+            if Cell.cell_ount == settings.MINES_COUNT:
+                ctypes.windll.user32.MessageBoxW(0, 'Congratulations! You won the game!')
+
+        # Cancel left and Right click events if cell is already opened:
+        self.cell_btn_object.unbind('<Button-1>')
+        self.cell_btn_object.unbind('<Button-3>')
 
     def right_click_action(self, event):
-        print(event)
-        print('I am right clicked!')
+        if not self.is_mine_candidate:
+            self.cell_btn_object.configure(bg='orange')
+            self.is_mine_candidate = True
+        else:
+            self.cell_btn_object.configure(bg='SystemButtonFace')
+            self.is_mine_candidate = False
 
     @staticmethod
     def create_cell_count_label(location):

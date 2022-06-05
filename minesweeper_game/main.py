@@ -23,6 +23,17 @@ def main():
     )
     top_frame.place(x=0, y=0)
 
+    game_title = tk.Label(
+        bg='black',
+        fg='white',
+        text='Minesweeper Game',
+        font=('', 48)
+    )
+
+    game_title.place(
+        x=utils.width_prct(25), y=0
+    )
+
     left_frame = tk.Frame(
         root,
         width=utils.width_prct(25),
@@ -37,10 +48,11 @@ def main():
         height=utils.height_prct(75),
         bg='green',
     )
+
     center_frame.place(
         x=utils.width_prct(25),
         y=utils.height_prct(25)
-   )
+    )
 
     # Add the tile of mines to the center_frame
     for x in range(settings.GRID_SIZE):

@@ -2,6 +2,7 @@ import tkinter as tk
 
 import settings
 import utils
+from cell import  Cell
 
 
 def main():
@@ -36,9 +37,21 @@ def main():
         height=utils.height_prct(75),
         bg='green',
     )
-    center_frame.place(x=utils.width_prct(25),
-                       y=utils.height_prct(25)
-                       )
+    center_frame.place(
+        x=utils.width_prct(25),
+        y=utils.height_prct(25)
+   )
+
+    # Add the tile of mines to the center_frame
+    for x in range(settings.GRID_SIZE):
+        for y in range(settings.GRID_SIZE):
+            c = Cell()
+            c.create_btn_object(center_frame)
+            c.cell_btn_object.grid(
+                column=x,
+                row=y
+            )
+
 
     # Run the main loop
     root.mainloop()

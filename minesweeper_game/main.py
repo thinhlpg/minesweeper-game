@@ -53,7 +53,7 @@ def main():
 
     Cell.randomize_mines()
 
-    # Run the main looo
+    # Run the main loop
     root.mainloop()
 
 
